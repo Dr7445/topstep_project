@@ -3,8 +3,8 @@ import json
 from datetime import datetime
 
 # --- Config ---
-USERNAME = "dr7445"
-API_KEY = "euy8xuYNVYfULBss+ooFciUmA7CuFZ2mAsnp/2A3hbA="
+USERNAME = "TOPSTEP_USERNAME"
+API_KEY = "euy8x******************2A3hbA="
 LOGIN_URL = "https://api.topstepx.com/api/Auth/loginKey"
 
 # --- Auth Request ---
