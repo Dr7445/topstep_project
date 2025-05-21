@@ -4,7 +4,7 @@ from datetime import datetime
 
 # --- Config ---
 USERNAME = "TOPSTEP_USERNAME"
-API_KEY = "euy8x******************2A3hbA="
+API_KEY = "TOPSTEP_API"
 LOGIN_URL = "https://api.topstepx.com/api/Auth/loginKey"
 
 # --- Auth Request ---
