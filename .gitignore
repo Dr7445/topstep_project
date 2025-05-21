@@ -1,0 +1,14 @@
+# Data & logs
+*.csv
+*.json
+*.log
+logs/
+data/
+token_log.txt
+schedule_log.txt
+api_response.json
+
+# VS Code config & Python clutter
+.vscode/
+__pycache__/
+*.pyc
