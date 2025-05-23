@@ -1,0 +1,32 @@
+📅 DAILY WORKFLOW CHECKLIST — Topstep Project
+
+☕ Step 1: Environment Check
+☐ Open project folder
+☐ Open VS Code + terminal
+☐ Run: git status
+
+🔄 Step 2: Run or Verify Pipeline
+☐ Run or check run_pipeline.bat
+☐ Check logs/schedule_log.txt
+
+📨 Step 3: Check Email Confirmation
+☐ Look for pipeline email
+☐ If missing: run send_email.py
+
+🗂 Step 4: Process Trade Data
+☐ Add new .csv to raw/
+☐ Run process_historical.py
+
+🧱 Step 5: Insert into Database
+☐ Run load_to_db.py
+☐ Verify in SQLite
+
+💾 Step 6: Commit to Git
+☐ git add . → git commit → git push
+
+✅ Bonus
+☐ Run SQL query / visual summary
+☐ Update README or session_log.md
+
+
+To do - setup email notification

@@ -12,3 +12,4 @@ api_response.json
 .vscode/
 __pycache__/
 *.pyc
+.env

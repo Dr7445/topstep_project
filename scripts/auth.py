@@ -1,10 +1,15 @@
 import requests
 import json
 from datetime import datetime
+import os
+from dotenv import load_dotenv
 
-# --- Config ---
-USERNAME = "TOPSTEP_USERNAME"
-API_KEY = "TOPSTEP_API"
+# --- Load environment variables from .env file ---
+load_dotenv()
+
+USERNAME = os.getenv("TOPSTEP_USERNAME")
+API_KEY = os.getenv("TOPSTEP_APIKEY")  # Fixed name to match your .env
+
 LOGIN_URL = "https://api.topstepx.com/api/Auth/loginKey"
 
 # --- Auth Request ---
@@ -29,6 +34,7 @@ try:
         token = result.get("token")
         print(f"\n🎉 Token acquired: {token}")
 
+        os.makedirs("logs", exist_ok=True)  # Ensure log folder exists
         with open("logs/token_log.txt", "a") as f:
             f.write(f"{datetime.now().isoformat()} - {token}\n")
             print("📝 Token saved to logs/token_log.txt")
@@ -40,5 +46,3 @@ try:
 
 except Exception as e:
     print("⚠️ Error parsing response:", e)
-
-#
