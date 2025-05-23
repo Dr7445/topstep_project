@@ -3,7 +3,7 @@
 ☕ Step 1: Environment Check
 ☐ Open project folder
 ☐ Open VS Code + terminal
-☐ Run: git status
+☐ Run: git status (or use morning_sync.bat)
 
 🔄 Step 2: Run or Verify Pipeline
 ☐ Run or check run_pipeline.bat
@@ -15,7 +15,7 @@
 
 🗂 Step 4: Process Trade Data
 ☐ Add new .csv to raw/
-☐ Run process_historical.py
+☐ Run python historical/scripts/process_historical.py
 
 🧱 Step 5: Insert into Database
 ☐ Run load_to_db.py

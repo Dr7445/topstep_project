@@ -1,46 +1,46 @@
+import os
 import pandas as pd
-from pathlib import Path
 from datetime import datetime
 
-# Define directories
-raw_dir = Path("historical/raw")
-processed_dir = Path("historical/processed")
-log_file = Path("historical/process_log.txt")
-processed_dir.mkdir(parents=True, exist_ok=True)
+RAW_DIR = "historical/raw"
+PROCESSED_DIR = "historical/processed"
+LOG_PATH = "logs/process_log.txt"
 
-# Get latest CSV from raw folder
-csv_files = [raw_dir / "orders_export.csv"]
-if not csv_files:
-    print("⚠️ No CSV files found in 'historical/raw'.")
-    exit()
+def log(message):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(LOG_PATH, "a") as f:
+        f.write(f"[{timestamp}] {message}\n")
 
-latest_file = csv_files[0]
-print(f"📂 Found file: {latest_file.name}")
+def main():
+    if not os.path.exists(RAW_DIR):
+        log("❌ Raw directory not found.")
+        return
 
-# Load and clean data
-try:
-    df = pd.read_csv(latest_file)
-    print(f"📊 Loaded {len(df)} rows")
+    csv_files = [f for f in os.listdir(RAW_DIR) if f.endswith(".csv")]
+    if not csv_files:
+        log("No new .csv files found in 'raw/'.")
+        return
 
-    # Standardize columns
-    df.columns = df.columns.str.strip().str.lower()
+    combined_df = pd.DataFrame()
 
-    # Parse timestamp if available
-    if 'timestamp' in df.columns:
-        df['timestamp'] = pd.to_datetime(df['timestamp'])
+    for file in csv_files:
+        try:
+            file_path = os.path.join(RAW_DIR, file)
+            df = pd.read_csv(file_path)
+            log(f"Loaded '{file}' with {len(df)} rows.")
+            combined_df = pd.concat([combined_df, df], ignore_index=True)
+        except Exception as e:
+            log(f"❌ Error loading '{file}': {e}")
 
-    # Example transformation: calculate trade duration (if possible)
-    if 'entryprice' in df.columns and 'exitprice' in df.columns:
-        df['netchange'] = df['exitprice'] - df['entryprice']
+    # Drop missing values and duplicates
+    cleaned_df = combined_df.dropna().drop_duplicates()
 
-    # Save cleaned file
-    output_file = processed_dir / f"{latest_file.stem}_cleaned.csv"
-    df.to_csv(output_file, index=False)
-    print(f"✅ Cleaned data saved to: {output_file}")
+    # Save one unified cleaned file
+    output_path = os.path.join(PROCESSED_DIR, "all_trades_cleaned.csv")
+    cleaned_df.to_csv(output_path, index=False)
 
-    # Log the processing
-    with open(log_file, "a") as log:
-        log.write(f"[{datetime.now().isoformat()}] Processed: {latest_file.name} -> {output_file.name}\n")
+    log(f"Unified file saved as 'all_trades_cleaned.csv' with {len(cleaned_df)} rows.")
 
-except Exception as e:
-    print(f"❌ Error processing file: {e}")
+if __name__ == "__main__":
+    main()
+
