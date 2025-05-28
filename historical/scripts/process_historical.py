@@ -4,42 +4,46 @@ from datetime import datetime
 
 RAW_DIR = "historical/raw"
 PROCESSED_DIR = "historical/processed"
+TARGET_FILE = "orders_export (3).csv"
 LOG_PATH = "logs/process_log.txt"
 
 def log(message):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with open(LOG_PATH, "a") as f:
+    with open(LOG_PATH, "a", encoding="utf-8") as f:
         f.write(f"[{timestamp}] {message}\n")
 
 def main():
-    if not os.path.exists(RAW_DIR):
-        log("❌ Raw directory not found.")
+    print("🟣 Processing:", TARGET_FILE)
+
+    raw_path = os.path.join(RAW_DIR, TARGET_FILE)
+    if not os.path.exists(raw_path):
+        print("❌ File not found:", raw_path)
+        log(f"❌ File not found: {TARGET_FILE}")
         return
 
-    csv_files = [f for f in os.listdir(RAW_DIR) if f.endswith(".csv")]
-    if not csv_files:
-        log("No new .csv files found in 'raw/'.")
-        return
+    try:
+        df = pd.read_csv(raw_path)
+        print(f"📥 Loaded '{TARGET_FILE}' → {df.shape[0]} rows")
+        log(f"📥 Loaded '{TARGET_FILE}' with {len(df)} rows")
 
-    combined_df = pd.DataFrame()
+        # 🔧 Normalize column names: strip spaces and lowercase everything
+        df.columns = df.columns.str.strip().str.lower()
 
-    for file in csv_files:
-        try:
-            file_path = os.path.join(RAW_DIR, file)
-            df = pd.read_csv(file_path)
-            log(f"Loaded '{file}' with {len(df)} rows.")
-            combined_df = pd.concat([combined_df, df], ignore_index=True)
-        except Exception as e:
-            log(f"❌ Error loading '{file}': {e}")
+        # ✅ Define essential fields with lowercase names
+        essential_columns = ["id", "createdat", "symbol", "price"]
+        df_cleaned = df.dropna(subset=essential_columns).drop_duplicates()
 
-    # Drop missing values and duplicates
-    cleaned_df = combined_df.dropna().drop_duplicates()
+        os.makedirs(PROCESSED_DIR, exist_ok=True)
+        output_file = "orders_export_3_cleaned.csv"
+        output_path = os.path.join(PROCESSED_DIR, output_file)
+        df_cleaned.to_csv(output_path, index=False)
 
-    # Save one unified cleaned file
-    output_path = os.path.join(PROCESSED_DIR, "all_trades_cleaned.csv")
-    cleaned_df.to_csv(output_path, index=False)
+        print(f"✅ Saved cleaned file → {output_path}")
+        log(f"✅ Saved cleaned file: {output_file} with {len(df_cleaned)} rows")
 
-    log(f"Unified file saved as 'all_trades_cleaned.csv' with {len(cleaned_df)} rows.")
+    except Exception as e:
+        print(f"❌ Error processing file: {e}")
+        log(f"❌ Error processing {TARGET_FILE}: {e}")
 
 if __name__ == "__main__":
     main()
