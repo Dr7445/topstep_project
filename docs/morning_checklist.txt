@@ -1,32 +1,46 @@
-📅 DAILY WORKFLOW CHECKLIST — Topstep Project
+📅 DAILY WORKFLOW CHECKLIST — Topstep Project (v2)
 
 ☕ Step 1: Environment Check
-☐ Open project folder
-☐ Open VS Code + terminal
+☐ Open topstep_project/ folder
+☐ Launch VS Code and integrated terminal
 ☐ Run: git status (or use morning_sync.bat)
 
 🔄 Step 2: Run or Verify Pipeline
-☐ Run or check run_pipeline.bat
-☐ Check logs/schedule_log.txt
+☐ Run run_pipeline.bat OR run scripts manually
+☐ Check logs/schedule_log.txt for latest run
+☐ If token expired, re-run: python auth.py
 
-📨 Step 3: Check Email Confirmation
-☐ Look for pipeline email
-☐ If missing: run send_email.py
+📨 Step 3: Email Confirmation
+☐ Look for confirmation email from pipeline
+☐ If missing, manually run: python send_email.py
 
-🗂 Step 4: Process Trade Data
-☐ Add new .csv to raw/
-☐ Run python historical/scripts/process_historical.py
+🗂 Step 4: Process New CSV
+☐ Save/download latest .csv from Topstep
+☐ Move it into historical/raw/
+☐ Check file name — avoid spaces/special characters (e.g. orders_export_2025_05_29.csv)
+☐ Run: python historical/scripts/process_topstep_csv.py
+☐ When prompted, enter exact filename
 
-🧱 Step 5: Insert into Database
-☐ Run load_to_db.py
-☐ Verify in SQLite
+🔍 Tip: If detection fails, run python process_single_csv.py and inspect headers manually.
 
-💾 Step 6: Commit to Git
-☐ git add . → git commit → git push
+🧱 Step 5: Insert into Database (optional)
+☐ Run: python load_to_db.py
+☐ Open DB Viewer (or SQLite browser)
+☐ Verify new rows were added successfully
 
-✅ Bonus
-☐ Run SQL query / visual summary
-☐ Update README or session_log.md
+💾 Step 6: Version Control
+☐ Run:
+
+git add .
+git commit -m "🧹 Processed new data and updated pipeline logs"
+git push origin main
+🏷 Optionally tag milestone with:
 
 
-To do - setup email notification
+git tag v2-csv-ingest-stable
+git push origin --tags
+✅ Bonus Steps (Optional)
+☐ Run SQL summary query
+☐ Generate a quick viz or table in Python or R
+☐ Update README.md or session_log.md with today’s progress
+``
